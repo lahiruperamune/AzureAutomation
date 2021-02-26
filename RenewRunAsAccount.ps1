@@ -1,19 +1,16 @@
 Param (
- #   [Parameter(Mandatory=$true)]
- #   [string] $SubscriptionId,
- #   [Parameter(Mandatory=$true)]
- #   [string] $AutomationAccountName,
- #   [Parameter(Mandatory=$true)]
- #   [string] $CertificatePassword,
+    [Parameter(Mandatory=$true)]
+    [string] $SubscriptionId,
+    [Parameter(Mandatory=$true)]
+    [string] $AutomationAccountName,
+    [Parameter(Mandatory=$true)]
+    [string] $CertificatePassword,
     [Parameter(Mandatory=$false)]
     [int] $CertificateExpirationInMonths = 12,
     [Parameter(Mandatory=$false)]
     [ValidateSet('AzureCloud','AzureUSGovernment')]
     [Alias('EnvironmentName')]
-    [string] $Environment = 'AzureCloud',
-    [string] $SubscriptionId = '174e2f24-bd9f-4c4d-990f-8ca54c760d09',
-    [string] $AutomationAccountName = 'ztopfsmprdAutomationAccount',
-    [string] $CertificatePassword = 'Cloud@123'
+    [string] $Environment = 'AzureCloud'
 )
     Function IsWindows10 {
         # Returns true if operating system version is greater than or equal to 6.3.0

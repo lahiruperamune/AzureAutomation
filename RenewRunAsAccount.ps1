@@ -5,14 +5,10 @@ Param (
  #   [string] $AutomationAccountName,
  #   [Parameter(Mandatory=$true)]
  #   [string] $CertificatePassword,
-    [Parameter(Mandatory=$false)]
     [int] $CertificateExpirationInMonths = 12,
-    [Parameter(Mandatory=$false)]
-    [ValidateSet('AzureCloud','AzureUSGovernment')]
-    [Alias('EnvironmentName')]
     [string] $Environment = 'AzureCloud',
     [string] $SubscriptionId = '174e2f24-bd9f-4c4d-990f-8ca54c760d09',
-    [string] $AutomationAccountName = 'ztopfsmprdAutomationAccount',
+    [string] $AutomationAccountName = 'ytop-automationacc',
     [string] $CertificatePassword = 'Cloud@123'
 )
     Function IsWindows10 {
@@ -67,9 +63,8 @@ if (!(IsWindows10)) {
 }
 
 # Login to Azure.
-Write-Output ("Prompting user to login to Azure environment '{0}'." -f $Environment)
-$account = Add-AzureRmAccount -Environment $Environment
-#$account = Import-AzureRmContext -Path "C:\AzureProfile.json"
+Write-Output ("Login to Azure environment")
+$account = Import-AzureRmContext -Path "C:\AzureProfile.json"
 if (!($account)) {
     throw ("Unable to successfully authenticate to Azure for environment '{0}'." -f $Environment)
 }
@@ -127,8 +122,8 @@ $PfxCert = New-Object -TypeName System.Security.Cryptography.X509Certificates.X5
 $CertValue = [System.Convert]::ToBase64String($PfxCert.GetRawCertData())
 
 # This is the most likely failure point as modifying the SPN may require a higher level of permissions
-Write-Output ("Adding the new certificate as the credential for the service principal.")
-New-AzureRmADSpCredential -ServicePrincipalName $AzureADSPNName -CertValue $CertValue -StartDate ((Get-Date).AddMinutes(1)) -EndDate $PfxCert.GetExpirationDateString()
+#Write-Output ("Adding the new certificate as the credential for the service principal.")
+#New-AzureRmADSpCredential -ServicePrincipalName $AzureADSPNName -CertValue $CertValue -StartDate ((Get-Date).AddMinutes(1)) -EndDate $PfxCert.GetExpirationDateString()
 
 # Upload the new certificate to the AzureRunAsCertificate asset
 Write-Output ("Updating AzureRunAsCertificate asset with new certificate.")

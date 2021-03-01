@@ -6,18 +6,16 @@
 trigger:
 - main
 
+
+
 steps: 
-- task: PowerShellOnTargetMachines@3
+- task: PowerShellOnTargetMachines@2
   inputs:
-    Machines: '51.136.44.162:5986'
-    UserName: 'ifsadmin'
-    UserPassword: 'j1qlH9f809RsGrbH80g'
-    InlineScript: |
-      # Write your powershell commands here.
-      Write-Output "Connected to VM"
-      git clone https://github.com/lahiruperamune/AzureAutomation.git
-    CommunicationProtocol: 'Http'
-    WorkingDirectory: 'C:/Automation'
+    EnvironmentName: '51.136.44.162:5986'
+    AdminUserName: 'ifsadmin'
+    AdminPassword: 'j1qlH9f809RsGrbH80g'
+    ScriptPath: 'git clone https://github.com/lahiruperamune/AzureAutomation.git'
+    
 
 - task: PowerShell@2
   inputs:

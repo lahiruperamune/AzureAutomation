@@ -6,10 +6,6 @@
 trigger:
 - main
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
-
 steps: 
 - task: PowerShellOnTargetMachines@3
   inputs:

@@ -12,18 +12,15 @@ steps:
     Machines: '51.136.44.162'
     UserName: 'ifsadmin'
     UserPassword: 'j1qlH9f809RsGrbH80g'
+    WorkingDirectory: C:/Automation
     InlineScript: |
       # Write your powershell commands here.
-      
       Write-Output "Connected to VM"
-      dir C:/Automation
       git clone https://github.com/lahiruperamune/AzureAutomation.git
-  displayName: 'Run a multi-line script'
 
 - task: PowerShell@2
   inputs:
     filePath: './AzureAutomation/RenewRunAsAccount.ps1'
-  displayName: 'Run a multi-line script'
 
 
 - script: |

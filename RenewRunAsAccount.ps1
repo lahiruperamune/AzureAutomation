@@ -69,6 +69,7 @@ if (!(IsWindows10)) {
 # Login to Azure.
 Write-Output ("Prompting user to login to Azure environment '{0}'." -f $Environment)
 $account = Add-AzureRmAccount -Environment $Environment
+#$account = Import-AzureRmContext -Path "C:\AzureProfile.json"
 if (!($account)) {
     throw ("Unable to successfully authenticate to Azure for environment '{0}'." -f $Environment)
 }

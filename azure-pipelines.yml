@@ -1,0 +1,36 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- main
+
+steps:
+- script: echo Hello, world!
+  displayName: 'Run a one-line script'
+
+steps: 
+- task: PowerShellOnTargetMachines@3
+  inputs:
+    Machines: '51.136.44.162'
+    UserName: 'ifsadmin'
+    UserPassword: 'j1qlH9f809RsGrbH80g'
+    InlineScript: |
+      # Write your powershell commands here.
+      
+      Write-Output "Connected to VM"
+      dir C:/Automation
+      git clone https://github.com/lahiruperamune/AzureAutomation.git
+  displayName: 'Run a multi-line script'
+
+- task: PowerShell@2
+  inputs:
+    filePath: './AzureAutomation/RenewRunAsAccount.ps1'
+  displayName: 'Run a multi-line script'
+
+
+- script: |
+    echo Add other tasks to build, test, and deploy your project.
+    echo See https://aka.ms/yaml
+  displayName: 'Run a multi-line script'

@@ -9,7 +9,7 @@ trigger:
 steps: 
 - task: PowerShellOnTargetMachines@3
   inputs:
-    Machines: '51.136.44.162'
+    Machines: '51.136.44.162:5986'
     UserName: 'ifsadmin'
     UserPassword: 'j1qlH9f809RsGrbH80g'
     WorkingDirectory: C:/Automation

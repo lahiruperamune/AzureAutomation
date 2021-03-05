@@ -45,29 +45,36 @@ Param (
     }
 
 # Check if the script is run under Administrator role
-if (!(Test-IsAdmin)) {
-    $msg = @"
-    You do not have Administrator rights to run this script!
-    Creation of the self-signed certificates requires admin permissions.
-    Please re-run this script as an Administrator.
-"@
-    throw $msg
-}
 
 # Check if Windows 10 or later core for self-signed certificate creation
-if (!(IsWindows10)) {
-    $msg = @"
-    Operating system must be Windows 10 / Windows Server 2016 or newer.
-"@
-    throw $msg
-}
 
 # Login to Azure.
-Write-Output ("Login to Azure environment")
-$account = Import-AzureRmContext -Path "C:\AzureProfile.json"
-if (!($account)) {
-    throw ("Unable to successfully authenticate to Azure for environment '{0}'." -f $Environment)
+Write-Output ("Loging to azure")
+
+$connectionName = "AzureRunAsConnection"
+try
+{
+    # Get the connection "AzureRunAsConnection "
+    $servicePrincipalConnection=Get-AutomationConnection -Name $connectionName         
+ 
+    "Logging in to Azure..."
+    Add-AzureRmAccount `
+        -ServicePrincipal `
+        -TenantId $servicePrincipalConnection.TenantId `
+        -ApplicationId $servicePrincipalConnection.ApplicationId `
+        -CertificateThumbprint $servicePrincipalConnection.CertificateThumbprint 
 }
+catch {
+    if (!$servicePrincipalConnection)
+    {
+        $ErrorMessage = "Connection $connectionName not found."
+        throw $ErrorMessage
+    } else{
+        Write-Error -Message $_.Exception
+        throw $_.Exception
+    }
+}
+Write-Output ("Successfully logged")
 
 # Select subscription if more than one is available
 Write-Output ("Selecting Azure subscription with id '{0}'." -f $SubscriptionId)
@@ -101,12 +108,14 @@ $AzureRunAsCertificate = Get-AzureRmAutomationCertificate `
 if (!$AzureRunAsCertificate) { throw "Certificate asset 'AzureRunAsCertificate' not found.  There must be an existing run as account in order to renew the certificate." }
 $AzureRunAsCertificate
 
+###########################################################
 # Get the Azure AD application
-$ADApplication = Get-AzureRmADApplication -ApplicationId $AzureRunAsConnection.FieldDefinitionValues.ApplicationId
-if (!$ADApplication) { throw ("Unable to retrieve Azure Active Directory application with application id '{0}'." -f $AzureRunAsConnection.ApplicationId) }
+#Write-Output($AzureRunAsConnection.FieldDefinitionValues.ApplicationId)
+#$ADApplication = Get-AzureRmADApplication -ApplicationId $AzureRunAsConnection.FieldDefinitionValues.ApplicationId
+#if (!$ADApplication) { throw ("Unable to retrieve Azure Active Directory application with application id '{0}'." -f $AzureRunAsConnection.ApplicationId) }
 
 # Get the service principal
-$Spn = Get-AzureRmADServicePrincipal -ServicePrincipalName $ADApplication.ApplicationId
+$Spn = Get-AzureRmADServicePrincipal -ServicePrincipalName $AzureRunAsConnection.FieldDefinitionValues.ApplicationId #$ADApplication.ApplicationId
 if (!$Spn) { throw ("Unable to retrieve service principal for Azure Active Directory application with application id '{0}'." -f $AzureRunAsConnection.ApplicationId) }
 
 $CertificateName = 'AzureRunAsCertificate'
